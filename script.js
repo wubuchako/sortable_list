@@ -26,7 +26,11 @@ createList();
 //Insert list items into DOM
 function createList(){
     [...richestPeople] //richestPeopleのarrayを全てコピー
+    .map(a => ({ value: a, sort: Math.random()})) //sortしてランダムに数出して新たな配列作る。
+    .sort((a, b) => a.sort - b.sort)
+    .map(a => a.value)
     .forEach((person, index) => { //personは人の名前、indexは配列の0, 1
+        console.log(person);
         const listItem = document.createElement('li');
 
         listItem.setAttribute('data-index', index);//data-indexのattributeつける index配列の0-9
