@@ -33,6 +33,8 @@ function createList(){
         console.log(person);
         const listItem = document.createElement('li');
 
+        listItem.classList.add('wrong');
+
         listItem.setAttribute('data-index', index);//data-indexのattributeつける index配列の0-9
 
         listItem.innerHTML = `
@@ -47,4 +49,77 @@ function createList(){
 
         draggable_list.appendChild(listItem);//liをulに入れる。DOMに入れる。
     });
+
+    addEventListeners();
 }
+
+function dragStart(){
+ //console.log('Event: ', 'dragstart');
+ dragStartIndex = +this.closest('li').getAttribute('data-index');//dragするアイテムの番号が出る
+}
+
+function dragEnter(){
+ //console.log('Event: ', 'dragenter');
+ this.classList.add('over');
+}
+
+function dragLeave(){
+ //console.log('Event: ', 'dragleave'); 
+ this.classList.remove('over');  
+}
+
+function dragOver(e){
+ //console.log('Event: ', 'dragover');
+ e.preventDefault();   //初期設定の動きを防ぐ
+}
+
+function dragDrop(){
+ //console.log('Event: ', 'drop'); 
+ const dragEndIndex = +this.getAttribute('data-index');
+ swapItems(dragStartIndex, dragEndIndex);
+
+ this.classList.remove('over');
+}
+
+//Swap list items that are dag and drop
+function swapItems(fromIndex, toIndex){
+    const itemOne = listItems[fromIndex].querySelector('.draggable');
+    const itemTwo = listItems[toIndex].querySelector('.draggable');
+
+    listItems[fromIndex].appendChild(itemTwo);
+    listItems[toIndex].appendChild(itemOne);
+}
+
+//Check the order of list items
+function checkOrder(){
+    listItems.forEach((listItem, index) => {
+        const personName = listItem.querySelector('.draggable').innerText.trim();
+
+        if(personName !== richestPeople[index]){
+            listItem.classList.add('wrong');
+        } else {
+            listItem.classList.remove('wrong');
+            listItem.classList.add('right');
+        }
+    });
+}
+
+
+function addEventListeners(){
+    const draggables = document.querySelectorAll('.draggable');
+    const dragListItems = document.querySelectorAll('.draggable-list li');
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', dragStart);
+    });
+
+    dragListItems.forEach(item => {
+        item.addEventListener('dragover', dragOver);
+        item.addEventListener('drop', dragDrop);
+        item.addEventListener('dragenter', dragEnter);
+        item.addEventListener('dragleave', dragLeave);
+
+    });
+}
+
+check.addEventListener('click', checkOrder);
